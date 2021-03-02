@@ -9,3 +9,5 @@ set number relativenumber
 let mapleader="\<space>"
 
 imap kj <Esc>
+
+map <Leader>gs :G<CR>
