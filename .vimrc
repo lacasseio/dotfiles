@@ -7,3 +7,5 @@ syntax on
 set number relativenumber
 
 let mapleader="\<space>"
+
+imap kj <Esc>
