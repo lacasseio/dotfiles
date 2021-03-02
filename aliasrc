@@ -1,0 +1,21 @@
+# Gradle alias
+alias gr=gradle
+alias gw=./gradlew
+
+# Global git
+alias g=git
+
+alias v=vim
+alias sv='sudo vim'
+
+# git alias (https://githowto.com/aliases)
+alias gs='git status'
+alias ga='git add '
+alias gb='git branch --sort=-committerdate'
+alias gc='git commit'
+alias gd='git diff'
+alias gco='git checkout '
+alias gk='gitk --all&'
+alias gx='gitx --all'
+alias gpick='git cherry-pick'
+
