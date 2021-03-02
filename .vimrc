@@ -11,3 +11,5 @@ let mapleader="\<space>"
 imap kj <Esc>
 
 map <Leader>gs :G<CR>
+
+map <Leader>w :w!<CR>
