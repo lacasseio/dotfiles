@@ -6,3 +6,4 @@ syntax on
 
 set number relativenumber
 
+let mapleader="\<space>"
