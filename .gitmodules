@@ -1,12 +1,12 @@
-[submodule "dotvim/pack/default/opt/gruvbox"]
-	path = dotvim/pack/default/opt/gruvbox
+[submodule "vim/dotvim/pack/default/opt/gruvbox"]
+	path = vim/dotvim/pack/default/opt/gruvbox
 	url = https://github.com/morhetz/gruvbox
-[submodule "dotvim/pack/default/start/fugitive"]
-	path = dotvim/pack/default/start/fugitive
+[submodule "vim/dotvim/pack/default/opt/fugitive"]
+	path = vim/dotvim/pack/default/opt/fugitive
 	url = https://github.com/tpope/vim-fugitive
-[submodule "dotvim/pack/default/start/coc"]
-	path = dotvim/pack/default/start/coc
+[submodule "vim/dotvim/pack/default/opt/coc"]
+	path = vim/dotvim/pack/default/opt/coc
 	url = https://github.com/neoclide/coc.nvim
-[submodule "dotvim/pack/default/start/numbertoggle"]
-	path = dotvim/pack/default/start/numbertoggle
+[submodule "vim/dotvim/pack/default/opt/numbertoggle"]
+	path = vim/dotvim/pack/default/opt/numbertoggle
 	url = https://github.com/jeffkreeftmeijer/vim-numbertoggle
