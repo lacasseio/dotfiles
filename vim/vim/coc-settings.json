@@ -1,8 +1,0 @@
-{
-	"java.configuration.runtimes": [
-		{
-			"name": "JavaJDK11",
-			"path": "/Users/daniel/.sdkman/candidates/java/11.0.6.hs-adpt"
-		}
-	]
-}
