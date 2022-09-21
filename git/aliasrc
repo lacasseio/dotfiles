@@ -1,0 +1,10 @@
+alias g='git'
+
+alias ga='git add'
+alias gb='git branch'
+alias gc='git commit'
+alias gco='git checkout'
+alias grb='git rebase'
+alias grbc='git rebase --continue'
+alias gs='git status'
+
