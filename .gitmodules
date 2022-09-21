@@ -1,5 +1,5 @@
 [submodule "vim/dotvim/pack/default/opt/gruvbox"]
-	path = vim/dotvim/pack/default/opt/gruvbox
+	path = vim/dotvim/pack/default/start/gruvbox
 	url = https://github.com/morhetz/gruvbox
 [submodule "vim/dotvim/pack/default/opt/fugitive"]
 	path = vim/dotvim/pack/default/opt/fugitive
