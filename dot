@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+
+ProgName=$(basename $0)
+
+show_help() {
+	echo "Usage: $ProgName <subcommand> [options]\n"
+	echo "	install	Install dot topics"
+	echo ""
+	echo "For help with each subcommand run:"
+	echo "$ProgName <subcommand> -h|--help"
+}
+
+if [ "$#" == "0" ]; then
+	show_help
+	exit 1
+fi
+
+create_symbolic_link() {
+	local src=$1
+	local dst=$2
+	if [ -L "${dst}" ]; then
+		if [ "$FORCE" = true ]; then
+			ex "unlink \"${dst}\""
+			ex "ln -s \"${src}\" \"${dst}\""
+		else
+			ex "echo \"Skipping ${dst}... already exists\""
+		fi
+	else
+		if [ -e "${dst}" ]; then
+			if [ "$FORCE" = true ]; then
+				if [ -d "${dst}" ]; then
+					ex "rm -rf \"${dst}\""
+				else 
+					ex "rm -f \"${dst}\""
+				fi
+				ex "ln -s \"${src}\" \"${dst}\""
+			else
+				ex "echo \"Skipping ${dst}... already exists\""
+			fi
+		else
+			ex "ln -s \"${src}\" \"${dst}\""
+		fi
+	fi
+}
+
+list_current_aliases() {
+	local result=()
+	if [ -d "${aliases_dir}" ]; then
+		for alias_filename in `ls "${aliases_dir}"`
+		do
+			result+=("${aliases_dir}/${alias_filename}")
+		done
+	fi
+	echo "${result[@]}"
+}
+
+create_directory_if_absent() {
+	[ ! -d "$1" ] && ex "mkdir -p \"$1\""
+}
+
+create_empty_file() {
+	[ -f "$1" ] && ex "echo -n > \"$1\"" || ex "touch \"$1\""
+}
+
+
+process_aliases() {
+	local dir=$1
+	local result=()
+	while read -r line
+	do
+		line=(${line//;/ })
+		create_symbolic_link "${line[1]}" "$dir/${line[0]}"
+		result+=("$dir/${line[0]}")
+	done < "$alias_data"
+	echo "${result[@]}"
+}
+
+
+cmd_install() {
+	# Compute symlinks
+	while read -r line
+	do
+		line=(${line//;/ })
+		create_symbolic_link "${line[1]}" "${line[2]}"
+	done < "$install_tmpfile"
+
+	# Compute aliases symlinks
+	aliases_dir="${HOME}/.aliases.d"
+	create_directory_if_absent "$aliases_dir"
+	current_aliases=($(list_current_aliases "$aliases_dir"))
+	current_aliases+=($(process_aliases "$aliases_dir"))
+
+	# Compute aliasrc
+	aliasrc="${HOME}/.aliasrc"
+	create_empty_file "$aliasrc"
+	for eachfile in "${current_aliases[@]}"
+	do
+		ex "echo \"source \\\"$eachfile\\\"\" >> \"${aliasrc}\""
+	done
+
+	# Recompute bashrc
+	bashrc="${HOME}/.bashrc"
+	create_empty_file "$bashrc"
+	ex "echo \"source \\\"${aliasrc}\\\"\" >> \"${bashrc}\""
+
+	ex "echo \". \\\"~/.bashrc\\\"\" > \"${HOME}/.profile\""
+}
+
+ex() {
+	echo "$@" >> "$cmds"
+}
+
+# see https://www.shellscript.sh/trap.html
+export install_tmpfile=$(mktemp)
+trap "rm -f $install_temp_file" 0 2 3 15
+
+export alias_data=$(mktemp)
+trap "rm -f $alias_data" 0 2 3 15
+
+symlink() {
+	local src="${MODULE_PWD}/$1"
+	local dst="${HOME}/$2"
+	echo "$TOPIC;$src;$dst" >> "$install_tmpfile"
+}
+
+alias() {
+	local aliasrc="${MODULE_PWD}/$1"
+	echo "$TOPIC;${aliasrc}" >> "$alias_data"
+}
+
+# Configuration phase
+export -f symlink
+export -f alias
+
+# Load each topic
+export MODULE_PWD=`pwd`/vim
+export TOPIC=vim
+vim/Dotfile
+
+export MODULE_PWD=`pwd`/git
+export TOPIC=git
+git/Dotfile
+
+export MODULE_PWD=`pwd`/gradle
+export TOPIC=gradle
+gradle/Dotfile
+
+# Process command-line options
+if [ -z ${FORCE+x} ]; then
+	FORCE=false
+fi
+if [ -z ${DRY_RUN+x} ]; then
+	DRY_RUN=false
+fi
+while (("$#")); do
+	case $1 in
+		-h|--help)
+			show_help
+			exit 0
+			;;
+		-f|--force)
+			FORCE=true
+			shift
+			;;
+		--dry-run)
+			DRY_RUN=true
+			shift
+			;;
+		-*|--*)
+			echo "Unknown option $1"
+			exit 1
+			;;
+		*)
+			# Prepare commands
+			cmds=$(mktemp)
+			trap "rm -f $cmds" 0 2 3 15
+
+			subcommand=$1
+			shift
+			cmd_${subcommand} $@ 
+			if [ $? = 127 ]; then
+				echo "Error: '$subcommand' is not a known subcommand." >&2
+				echo "	   Run '$ProgName --help' for a list of known subcommands." >&2
+				exit 1
+			fi
+
+			# Execute commands
+			if [ "$DRY_RUN" = true ]; then
+				cat "$cmds"
+			else
+				while read -r line
+				do
+					eval "$line"
+				done < "$cmds"
+			fi
+
+			exit 0
+			;;
+	esac
+done

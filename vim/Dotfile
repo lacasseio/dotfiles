@@ -1,0 +1,4 @@
+symlink dotvim .vim
+symlink dotvimrc .vimrc 
+symlink dotgvimrc .gvimrc
+alias aliasrc
