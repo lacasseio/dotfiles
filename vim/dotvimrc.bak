@@ -1,0 +1,255 @@
+set nocompatible        " be iMproved
+filetype off            " required!
+
+" Vundle Setup
+" Note: comments after Bundle commands are not allowed
+set runtimepath+=$HOME/.vim/bundle/Vundle.vim
+call vundle#begin()         " required!
+Plugin 'gmarik/Vundle.vim'  " required!
+Plugin 'vim-scripts/Liquid-Carbon'
+Plugin 'scrooloose/nerdtree'
+""Bundle 'tpope/vim-abolish'
+""Bundle 'moll/vim-node'
+""Bundle 'jelera/vim-javascript-synax'
+""Bundle 'vim-scripts/JavaScript-Indent'
+""Bundle 'godlygeek/tabular'
+""Bundle 'tpope/vim-fugitive'
+""Bundle 'tpope/vim-pathogen'
+""Bundle 'scrooloose/syntastic'
+""Bundle 'plasticboy/vim-markdown'
+call vundle#end()           " required!
+filetype plugin indent on   " required!
+"
+" Brief help
+" :PluginList          - list configured bundles
+" :PluginInstall(!)    - install (update) bundles
+" :PluginSearch(!) foo - search (or refresh cache first) for foo
+" :PluginClean(!)      - confirm (or auto-approve) removal of unused bundles
+
+" Custom: Setup color scheme
+if has("gui_running")
+    colors liquidcarbon
+endif
+
+" Syntastic: Configuration
+"let g:syntastic_enable_signs=1
+"let g:syntastic_auto_jump=1
+"let g:syntastic_stl_format = '[%E{Err: %fe #%e}%B{,}%W{Warn: %fw #%w}]'
+let g:syntastic_javascript_checkers = ['jshint', 'nodelint']
+
+
+
+set nostartofline          " Don't move the cursor to the start of the line
+
+if has("gui_running")
+    "set ruler                       " Show line & column number
+    set guioptions-=m               " Remove menu bar
+    set guioptions-=T               " Remove toolbar
+    set guioptions-=r               " Remove right-hand scroll bar
+endif
+
+if has("gui_running")
+    set relativenumber          " Set relative line number
+endif
+
+if exists('&cursorline')
+    "au WinEnter * set cursorline cursorcolumn
+    "hi! link CursorColumn CursorLine
+    set cursorline              " Set cursor line highlight
+endif
+
+" I don't like 'set mouse=a' behavior because it changes the position of
+" the cursor when clicking in a window to give it focus. I prefer
+" 'set mouse=vic'.
+if has('mouse') | set mouse=vic | endif
+
+" Fix file types
+if has('autocmd')
+    autocmd! BufNewFile,BufRead *.gradle setfiletype groovy
+    autocmd! BufNewFile,BufRead *.rss,*.atom setfiletype xml
+    autocmd! BufNewFile,BufRead *.js setfiletype javascript
+    autocmd! BufNewFile,BufRead *.py setfiletype python
+endif
+
+
+setlocal smartindent            " Automatically indent on new line
+setlocal tabstop=4              " Width of a tab in spaces
+setlocal softtabstop=4          " Space tab value
+setlocal shiftwidth=4           " Number of spaces to use for each step of (auto)indent
+setlocal expandtab              " Transform tab into space
+if has("autocmd")
+    filetype on
+    autocmd!   FileType   c            setlocal   ts=4   sts=4   sw=4   expandtab
+    autocmd!   FileType   cpp          setlocal   ts=4   sts=4   sw=4   expandtab
+    autocmd!   FileType   groovy       setlocal   ts=4   sts=4   sw=4   expandtab
+    autocmd!   FileType   java         setlocal   ts=4   sts=4   sw=4   expandtab
+    autocmd!   FileType   make         setlocal   ts=8   sts=8   sw=8   noexpandtab
+    autocmd!   FileType   yaml         setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   html         setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   css          setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   xml          setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   jade         setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   javascript   setlocal   ts=2   sts=2   sw=2   expandtab
+    autocmd!   FileType   python       setlocal   ts=4   sts=4   sw=4   expandtab
+endif
+
+set number
+
+"****************************************
+" S E T U P   B A C K U P   &   F I L E
+"****************************************
+set nobackup                    " Don't keep a backup file around
+set nowritebackup               " Don't want any backup file lying around
+set noswapfile                  " Set everything in memory
+
+"****************************************
+" S E T U P   C O M M A N D   M O D E
+"****************************************
+set history=300                 " Seams to be a good history value
+set showcmd                     " Show command in last line of the screen
+
+"****************************************
+" S E T U P   S E A R C H I N G
+"****************************************
+set incsearch                   " Search while typing
+set ignorecase                  " Ignore case of the search
+set smartcase                   " Don't ignore case on mixed case searches
+set hlsearch                    " Highlight search pattern
+highlight hi ctermfg=9 ctermbg=8 guibg=gray guifg=darkblue
+highlight Match term=bold,reverse cterm=bold ctermfg=lightblue ctermbg=white gui=bold guifg=blue guibg=white
+
+
+let mapleader = ","
+
+
+imap kj <Esc>
+
+" VimTipWiki: #646 - Eclipse-like move line
+nmap <A-j> :m+<CR>==
+nmap <A-k> :m-2<CR>==
+imap <A-j> <Esc>:m+<CR>==gi
+vmap <A-j> :m'>+<CR>gv=gv
+vmap <A-k> :m-2<CR>gv=gv
+
+
+" Mapping: Syntax highlight
+"  Highlight under cursor
+map <Leader>* <Leader>h
+map <Leader>h :exec "let @/='\\<".expand("<cword>")."\\>'"<Cr>
+"  Stop highlight
+map <Leader>H :let @/=''<CR>
+map <Leader>/ :let @/=''<CR>
+
+" Mapping: Spell checking
+set spelllang=en_ca
+nmap <Leader>s :set spell!<Cr>
+
+" Mapping: Force save
+map <Leader>w :w!<CR>
+
+" Mapping: Force quit
+map <Leader>q :q!<CR>
+
+" Vimcast: #1 - Show invisibles
+"   http://vimcasts.org/episodes/show-invisibles/
+"   EOL characters
+highlight NonText guifg=#4a4a59
+"   Tab characters
+highlight SpecialKey guifg=#4a4a59
+"   Don't show hidden characters
+set nolist
+"   Change default chars for tab and eol
+set listchars=tab:�\ ,eol:�
+"   Toggle mapping
+nmap <Leader>l :set list!<Cr>
+
+
+" Vimcast: #4 - Tidying whitespace
+"   http://vimcasts.org/episodes/tidying-whitespace/
+"   Automatically remove trailing whitespace
+if has('autocmd')
+    autocmd! BufWritePre *.py,*.js,*.c,*.cpp call Preserve("%s/\\s\\+$//e")
+endif
+"   Function definition
+function! Preserve(command)
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    execute a:command
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+nmap _$ :call Preserve("%s/\\s\\+$//e")<Cr>
+nmap _= :call Preserve("normal gg=G")<Cr>
+
+
+" Vimcast: #5 - Indentation commands
+"  http://vimcasts.org/episodes/indentation-commands/ 
+nmap <S-Tab> <<
+nmap <Tab> >>
+vmap <S-Tab> <gv
+vmap <Tab> >gv
+
+
+" Vimcast: #6 - Working with buffers
+"   http://vimcasts.org/episodes/working-with-buffers/
+"   Make vim more liberal about hidden buffer (vimcast#6)
+set hidden
+
+
+" Vimcast: #7 - Working with windows
+"   http://vimcasts.org/episodes/working-with-windows/
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-h> <C-w>h
+map <C-l> <C-w>l
+
+
+" Vimcast: #8 - Working with tabs
+map <C-Tab> gt
+map <C-S-Tab> gT
+map <A-1> 1gt
+map <A-2> 2gt
+map <A-3> 3gt
+map <A-4> 4gt
+map <A-5> 5gt
+map <A-6> 6gt
+map <A-7> 7gt
+map <A-8> 8gt
+map <A-9> 9gt
+map <A-0> :tablast<Cr>
+
+
+" Vimcast: #14 - The :edit command
+"   http://vimcasts.org/episodes/the-edit-command/
+cnoremap %% <C-R>=expand('%:h').'/'<Cr>
+map <Leader>ew :e %%
+map <Leader>es :sp %%
+map <Leader>ev :vsp %%
+map <Leader>et :tabe %%
+
+
+" Vimcast: #16 - Soft wrapping text
+"   http://vimcasts.org/episodes/soft-wrapping-text/
+command! -nargs=* Wrap set wrap linebreak nolist
+command! -nargs=* Nowrap set nowrap linebreak nolist
+
+" Vimcast: #29 - Aligning text with tabular vim
+"   http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+if exists(":Tabularize")
+    nmap <leader>a= :Tabularize /=<cr>
+    vmap <leader>a= :Tabularize /=<cr>
+    " Here we don't align :
+    nmap <leader>a: :Tabularize /:\zs<cr>
+    vmap <leader>a: :Tabularize /:\zs<cr>
+endif
+
+
+if has('autocmd')
+    " Source .vimrc when I write it.
+    autocmd! BufWritePost $MYVIMRC source $MYVIMRC
+endif
+
